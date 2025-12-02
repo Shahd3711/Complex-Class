@@ -1,83 +1,203 @@
-#include "Complex.h"
+#include"Complex.h"
+#include<cmath>
+#include<iostream>
 using namespace std;
-//Constructors
-Complex::Complex() : real_(0.0), imag_(0.0) 
-{
-    // Initializes complex number to 0 + 0i
-}
-Complex::Complex(double real) : real_(real), imag_(0.0) 
-{
-    // Initializes complex number to real + 0i
-}
 
-Complex::Complex(double real, double imag) : real_(real), imag_(imag) 
-{
-    // Initializes complex number to real + imag*i
-}
+Complex::Complex():real_(0.0),imag_(0.0){}
+Complex::Complex(double real):real_(real),imag_(0.0){}
+Complex::Complex(double real,double imag):real_(real),imag_(imag){}
 
-//Operator Overloading (Binary Arithmetic)
-// Addition: (a + bi) + (c + di) = (a + c) + (b + d)i
-Complex Complex::operator+(const Complex& other) const 
-{
-    double newReal = real_ + other.real_;
-    double newImag = imag_ + other.imag_;
-    return Complex(newReal, newImag);
+// Binary Arithmetic Operators
+Complex Complex::operator+(const Complex&other)const{
+    return Complex(real_+other.real_,imag_+other.imag_);
 }
-
-// Subtraction: (a + bi) - (c + di) = (a - c) + (b - d)i
-Complex Complex::operator-(const Complex& other) const 
-{
-    double newReal = real_ - other.real_;
-    double newImag = imag_ - other.imag_;
-    return Complex(newReal, newImag);
+Complex Complex::operator-(const Complex&other)const{
+    return Complex(real_-other.real_,imag_-other.imag_);
 }
-
-// Multiplication: (a + bi) * (c + di) = (ac - bd) + (ad + bc)i
-Complex Complex::operator*(const Complex& other) const 
-{
-    // a=real_, b=imag_, c=other.real_, d=other.imag_
-    double newReal = (real_ * other.real_) - (imag_ * other.imag_);
-    double newImag = (real_ * other.imag_) + (imag_ * other.real_);
-    return Complex(newReal, newImag);
+Complex Complex::operator*(const Complex&other)const{
+    return Complex(real_*other.real_-imag_*other.imag_,
+                   real_*other.imag_+imag_*other.real_);
 }
-
-// Division: (a + bi) / (c + di) = [(ac + bd) / (c² + d²)] + [(bc - ad) / (c² + d²)]i
-Complex Complex::operator/(const Complex& other) const 
-{
-    double c = other.real_;
-    double d = other.imag_;
-    // Calculate the denominator: c^2 + d^2
-    double denominator = (c * c) + (d * d);
-    // Basic error handling for division by zero complex number
-    if (denominator == 0.0) {
-        // In a real application, you would throw an exception.
-        // For this assignment, we print an error and return 0 + 0i.
-        cerr << "Error: Division by zero complex number." << endl;
-        return Complex(0.0, 0.0);
+Complex Complex::operator/(const Complex&other)const{
+    double d=other.real_*other.real_+other.imag_*other.imag_;
+    if(d==0){
+        cerr<<"Error:Division by zero complex number."<<endl;
+        return Complex(0.0,0.0);
     }
-    // Calculate the numerator's real part: ac + bd
-    double numReal = (real_ * c) + (imag_ * d);
-
-    // Calculate the numerator's imaginary part: bc - ad
-    double numImag = (imag_ * c) - (real_ * d);
-
-    // Final result
-    double newReal = numReal / denominator;
-    double newImag = numImag / denominator;
-
-    return Complex(newReal, newImag);
+    return Complex((real_*other.real_+imag_*other.imag_)/d,
+                   (imag_*other.real_-real_*other.imag_)/d);
+}
+Complex Complex::operator%(const Complex&other)const{
+    double a=modulus();
+    double b=other.modulus();
+    if(b==0.0){
+        cerr<<"Error:Modulus remainder by zero."<<endl;
+        return Complex(0,0);
+    }
+    double q=(int)(a/b);
+    double r=a-(q*b);
+    return Complex(r,0);
 }
 
-//Stream Overloading
+// Unary Sign Operators
+Complex Complex::operator+() const{
+    return *this;
+}
+Complex Complex::operator-() const{
+    return Complex(-real_, -imag_);
+}
 
-ostream& operator<<(ostream& os, const Complex& c) {
-    os << c.real_;
-    // Handle the sign for the imaginary part
-    if (c.imag_ >= 0) {
-        os << " + " << c.imag_ << "i";
-    } else {
-        // If imag is negative, print the '-' sign directly
-        os << " - " << -c.imag_ << "i";
+// Compound Assignment Operators
+Complex&Complex::operator+=(const Complex&other){
+    real_+=other.real_;
+    imag_+=other.imag_;
+    return*this;
+}
+Complex&Complex::operator-=(const Complex&other){
+    real_-=other.real_;
+    imag_-=other.imag_;
+    return*this;
+}
+Complex&Complex::operator*=(const Complex&other){
+    double r=real_*other.real_-imag_*other.imag_;
+    double i=real_*other.imag_+imag_*other.real_;
+    real_=r;
+    imag_=i;
+    return*this;
+}
+Complex&Complex::operator/=(const Complex&other){
+    double d=other.real_*other.real_+other.imag_*other.imag_;
+    if(d==0){
+        cerr<<"Error:Division by zero complex number in /=."<<endl;
+        return*this;
     }
+    double r=(real_*other.real_+imag_*other.imag_)/d;
+    double i=(imag_*other.real_-real_*other.imag_)/d;
+    real_=r;
+    imag_=i;
+    return*this;
+}
+Complex&Complex::operator%=(const Complex&other){
+    Complex result=*this%other;
+    real_=result.real_;
+    imag_=result.imag_;
+    return*this;
+}
+
+// Comparison Operators
+bool Complex::operator==(const Complex&other)const{
+    return real_==other.real_&&imag_==other.imag_;
+}
+bool Complex::operator!=(const Complex&other)const{
+    return!(*this==other);
+}
+
+// Unary Increment/Decrement Operators
+Complex&Complex::operator++(){
+    real_+=1.0;
+    return*this;
+}
+Complex Complex::operator++(int){
+    Complex temp=*this;
+    real_+=1.0;
+    return temp;
+}
+Complex&Complex::operator--(){
+    real_-=1.0;
+    return*this;
+}
+Complex Complex::operator--(int){
+    Complex temp=*this;
+    real_-=1.0;
+    return temp;
+}
+
+// Logical Operators
+bool Complex::operator!() const{
+    return modulus() == 0.0;
+}
+bool Complex::operator&&(const Complex& other) const{
+    return modulus() != 0.0 && other.modulus() != 0.0;
+}
+bool Complex::operator||(const Complex& other) const{
+    return modulus() != 0.0 || other.modulus() != 0.0;
+}
+
+// Casting Operators
+Complex::operator double() const {
+    return real_;
+}
+Complex::operator int() const {
+    return (int)real_;
+}
+Complex::operator float() const {
+    return (float)real_;
+}
+Complex::operator long long() const {
+    return (long long)real_;
+}
+Complex::operator char() const {
+    return (char)real_;
+}
+
+// Utility and Manual Functions
+double Complex::modulus()const{
+    return sqrt(real_*real_+imag_*imag_);
+}
+double Complex::argument()const{
+    return atan2(imag_,real_);
+}
+double Complex::cos_approx(double angle)const{
+    return cos(angle);
+}
+double Complex::sin_approx(double angle)const{
+    return sin(angle);
+}
+Complex Complex::manual_sqrt()const{
+    double r=modulus();
+    double theta=argument();
+    double nr=sqrt(r);
+    double half_theta=theta/2;
+    return Complex(nr*cos_approx(half_theta),nr*sin_approx(half_theta));
+}
+Complex Complex::manual_cbrt()const{
+    double r=modulus();
+    double theta=argument();
+    double nr=cbrt(r);
+    double third_theta=theta/3;
+    return Complex(nr*cos_approx(third_theta),nr*sin_approx(third_theta));
+}
+Complex Complex::modulus_rem(const Complex&other)const{
+    double a=modulus();
+    double b=other.modulus();
+    if(b==0.0){
+        cerr<<"Error:Modulus remainder by zero complex number."<<endl;
+        return Complex(0,0);
+    }
+    double q=(int)(a/b);
+    double r=a-(q*b);
+    return Complex(r,0);
+}
+Complex Complex::manual_pow(int p)const{
+    Complex base=*this;
+    Complex res(1,0);
+    int exp=p;
+    if(exp<0){
+        exp=-exp;
+        base=Complex(1,0)/base;
+    }
+    while(exp>0){
+        if(exp&1)res=res*base;
+        base=base*base;
+        exp>>=1;
+    }
+    return res;
+}
+double&Complex::operator[](int idx){
+    if(idx==0)return real_;
+    return imag_;
+}
+ostream&operator<<(ostream&os,const Complex&c){
+    os<<c.real_<<(c.imag_>=0?" + ":" - ")<<abs(c.imag_)<<"i";
     return os;
 }
