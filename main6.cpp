@@ -1,55 +1,84 @@
-#include "Complex.h"
-#include <iostream>
-#include <iomanip>
+#include"Complex.h"
+#include<iostream>
+#include<iomanip>
+#include<cmath>
 using namespace std;
 #define el '\n'
-int main()
-{
+
+int main(){
     cout<<fixed<<setprecision(2);
-    cout<<"--- Shahooda's C++ Complex Class ---"<<el;
-    double a, b;
+    cout<<"--- Shahooda's C++ Complex Class Test ---"<<el;
+
+    double a,b;
+    cout<<"Enter real and imaginary part: ";
     cin>>a>>b;
-    Complex c(a, b);
-    cout<<c<<el;
-    Complex c1(3.0, 4.0);
-    Complex c2(1.0, -2.0);
-    Complex c3(5.0);
-    Complex c4;
+    Complex c(a,b);
+    cout<<"User-input Complex c = "<<c<<el;
+
+    Complex c1(3.0,4.0);
+    Complex c2(1.0,-2.0);
+    Complex c_mod_rem_b(2.0,0.0);
+    Complex c_inc(5.0, 5.0);
+    Complex c_zero(0.0, 0.0);
+    Complex c_non_zero(1.0, 0.0);
+    Complex c_cast(65.75, 5.67);
+
     cout<<"Initial Values:"<<el;
-    cout<<"c1 = "<<c1<<el;//Output: 3.00 + 4.00i
-    cout<<"c2 = "<<c2<<el;//Output: 1.00 - 2.00i
-    cout<<"c3 (real only) = "<<c3<<el; // Output: 5.00 + 0.00i
-    cout<<"c4 (default) = "<<c4<<el; // Output: 0.00 + 0.00i
+    cout<<"c1 = "<<c1<<el;
+    cout<<"c_inc = "<<c_inc<<el;
     cout<<"-----------------------------------"<<el;
-    //Addition Test: c1 + c2 = (3+1) + (4-2)i = 4 + 2i
-    Complex sum=c1 + c2;
+
+    // Binary Arithmetic Test
+    Complex sum=c1+c2;
     cout<<"Addition (c1 + c2):"<<el;
     cout<<c1<<" + "<<c2<<" = "<<sum<<el;
     cout<<"-----------------------------------"<<el;
-    //Subtraction Test: c1 - c2 = (3-1) + (4-(-2))i = 2 + 6i
-    Complex diff=c1 - c2;
-    cout<<"Subtraction (c1 - c2):"<<el;
-    cout<<c1<< " - "<<c2<<" = "<<diff<<el;
-    cout<<"-----------------------------------"<<el;
-    // 4. Multiplication Test: c1 * c2 = (3+4i)(1-2i) = (3*1 - 4*(-2)) + (3*(-2) + 4*1)i = (3+8) + (-6+4)i = 11 - 2i
-    Complex prod=c1 * c2;
-    cout<<"Multiplication (c1 * c2):"<<el;
-    cout<<c1<<" * "<<c2<<" = "<<prod<<el;
-    cout<<"-----------------------------------"<<el;
-    // 5. Division Test: c1 / c2 = (3+4i) / (1-2i)
-    // Numerator: (3*1 + 4*(-2)) + (4*1 - 3*(-2))i = (3+8) + (4+6)i = 11 + 10i
-    // Denominator: 1^2 + (-2)^2 = 5
-    // Result: (11/5) + (10/5)i = 2.2 + 2i
-    Complex quot=c1 / c2;
-    cout<<"Division (c1 / c2):"<<el;
-    cout<<c1<<" / "<<c2<<" = "<<quot<<el;
+
+    // Unary Sign Operators Test
+    cout<<"Unary Sign Operators Test:"<<el;
+    cout<<"-c1 (Negative): "<<-c1<<el;
     cout<<"-----------------------------------"<<el;
 
-    // 6. Division by Zero Test
-    Complex c_zero(0.0, 0.0);
-    cout<<"Division by Zero Test (c1 / 0):"<<el;
-    Complex c_error=c1 / c_zero; // Should print an error and return 0 + 0i
-    cout<<"Result: "<<c_error<<el;
+    // Modulus and Assignment Test
+    Complex remainder=c1%c_mod_rem_b;
+    cout<<"Modulus Operator (c1 % c_mod_rem_b):"<<el;
+    cout<<c1<<" % "<<c_mod_rem_b<<" = "<<remainder<<el;
+    cout<<"c1 before %=: "<<c1<<el;
+    c1%=c_mod_rem_b;
+    cout<<"c1 after %=: "<<c1<<el;
     cout<<"-----------------------------------"<<el;
+
+    // Increment/Decrement Test
+    cout<<"Prefix and Postfix Operators Test:"<<el;
+    Complex prefix_res=++c_inc;
+    cout<<"Prefix Increment (++c_inc) Result: "<<prefix_res<<" | c_inc now: "<<c_inc<<el;
+    Complex postfix_res=c_inc++;
+    cout<<"Postfix Increment (c_inc++) Result: "<<postfix_res<<" | c_inc now: "<<c_inc<<el;
+    cout<<"-----------------------------------"<<el;
+
+    // Logical Operators Test
+    cout<<"Logical Operators Test:"<<el;
+    cout<<"!c1 (Not non-zero) : "<<(!c1 ? "True" : "False")<<el;
+    cout<<"!c_zero (Not zero) : "<<(!c_zero ? "True" : "False")<<el;
+    cout<<"(c1 && c2) : "<<(c1 && c2 ? "True" : "False")<<el;
+    cout<<"(c_zero || c_non_zero) : "<<(c_zero || c_non_zero ? "True" : "False")<<el;
+    cout<<"-----------------------------------"<<el;
+
+    // Casting Operators Test
+    double d_val = (double)c_cast;
+    int i_val = (int)c_cast;
+    float f_val = (float)c_cast;
+    long long ll_val = (long long)c_cast;
+    char ch_val = (char)c_cast;
+    
+    cout<<"Casting Operators Test (c_cast = "<<c_cast<<"):"<<el;
+    cout<<"Explicit cast to double: "<<d_val<<el;
+    cout<<"Explicit cast to int: "<<i_val<<el;
+    cout<<"Explicit cast to float: "<<f_val<<el;
+    cout<<"Explicit cast to long long: "<<ll_val<<el;
+    cout<<"Explicit cast to char (ASCII 65): "<<ch_val<<el;
+    
+    cout<<"-----------------------------------"<<el;
+
     return 0;
 }
