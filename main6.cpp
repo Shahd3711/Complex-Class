@@ -7,7 +7,7 @@ using namespace std;
 
 int main(){
     cout<<fixed<<setprecision(2);
-    cout<<"--- Shahooda's C++ Complex Class Test ---"<<el;
+    cout<<"--- Shahooda's C++ Complex Class ---"<<el;
 
     double a,b;
     cout<<"Enter real and imaginary part: ";
