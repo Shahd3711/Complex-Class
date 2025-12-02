@@ -1,47 +1,72 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
-#include <iostream>
+#include<iostream>
 using namespace std;
-class Complex 
-{
+
+class Complex{
 private:
     double real_;
     double imag_;
 
 public:
-    //Constructors
-
-
-    //Default constructor. Initializes to 0 + 0i.
     Complex();
-
-    //Constructor for real part only. Initializes to real + 0i.
-    //The value for the real part.
     explicit Complex(double real);
+    Complex(double real,double imag);
 
-    //Full constructor. Initializes to real + imag*i.
-    Complex(double real, double imag);
+    double getReal()const{return real_;}
+    double getImag()const{return imag_;}
 
-    //Getters
+    // Binary Arithmetic Operators
+    Complex operator+(const Complex&other)const;
+    Complex operator-(const Complex&other)const;
+    Complex operator*(const Complex&other)const;
+    Complex operator/(const Complex&other)const;
+    Complex operator%(const Complex&other)const;
 
-    //Returns the real component.
-    double getReal() const { return real_; }
+    // Unary Sign Operators
+    Complex operator+() const; 
+    Complex operator-() const; 
 
-    //Returns the imaginary component.
-    double getImag() const { return imag_; }
+    // Compound Assignment Operators
+    Complex&operator+=(const Complex&other);
+    Complex&operator-=(const Complex&other);
+    Complex&operator*=(const Complex&other);
+    Complex&operator/=(const Complex&other);
+    Complex&operator%=(const Complex&other);
 
-    //Operator Overloading
+    // Comparison Operators
+    bool operator==(const Complex&other)const;
+    bool operator!=(const Complex&other)const;
 
-    Complex operator+(const Complex& other) const;
+    // Unary Increment/Decrement Operators
+    Complex&operator++();
+    Complex operator++(int);
+    Complex&operator--();
+    Complex operator--(int);
+    
+    // Logical Operators
+    bool operator!() const;
+    bool operator&&(const Complex& other) const;
+    bool operator||(const Complex& other) const;
+    
+    // Casting Operators
+    operator double() const;
+    operator int() const;
+    operator float() const;
+    operator long long() const;
+    operator char() const;
 
-    Complex operator-(const Complex& other) const;
+    double modulus()const;
+    double argument()const;
+    double cos_approx(double angle)const;
+    double sin_approx(double angle)const;
+    Complex manual_sqrt()const;
+    Complex manual_cbrt()const;
+    Complex modulus_rem(const Complex&other)const;
+    Complex manual_pow(int p)const;
 
-    Complex operator*(const Complex& other) const;
+    double&operator[](int idx);
 
-    Complex operator/(const Complex& other) const;
-
-    //Stream Overloading (Friend function)
-
-    friend ostream& operator<<(ostream& os, const Complex& c);
+    friend ostream&operator<<(ostream&os,const Complex&c);
 };
 #endif
